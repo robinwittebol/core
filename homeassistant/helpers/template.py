@@ -1753,15 +1753,17 @@ def urlencode(value):
     return urllib_urlencode(value).encode("utf-8")
 
 
-def ternary(
+def iif(
     value: Any, if_true: Any = True, if_false: Any = False, if_none: Any = _SENTINEL
 ) -> Any:
-    """Ternary function/filter that allow for common if/else constructs.
+    """Immediate if function/filter that allow for common if/else constructs.
+
+    https://en.wikipedia.org/wiki/IIf
 
     Examples:
-        {{ is_state("device_tracker.frenck", "home") | ternary("yes", "no") }}
-        {{ ternary(1==2, "yes", "no") }}
-        {{ (1 == 1) | ternary("yes", "no") }}
+        {{ is_state("device_tracker.frenck", "home") | iif("yes", "no") }}
+        {{ iif(1==2, "yes", "no") }}
+        {{ (1 == 1) | iif("yes", "no") }}
     """
     if value is None and if_none is not _SENTINEL:
         return if_none
@@ -1883,7 +1885,7 @@ class TemplateEnvironment(ImmutableSandboxedEnvironment):
         self.filters["float"] = forgiving_float_filter
         self.filters["int"] = forgiving_int_filter
         self.filters["relative_time"] = relative_time
-        self.filters["ternary"] = ternary
+        self.filters["iif"] = iif
         self.globals["log"] = logarithm
         self.globals["sin"] = sine
         self.globals["cos"] = cosine
@@ -1912,7 +1914,7 @@ class TemplateEnvironment(ImmutableSandboxedEnvironment):
         self.globals["int"] = forgiving_int
         self.globals["pack"] = struct_pack
         self.globals["unpack"] = struct_unpack
-        self.globals["ternary"] = ternary
+        self.globals["iif"] = iif
         self.tests["match"] = regex_match
         self.tests["search"] = regex_search
 
